@@ -33,6 +33,7 @@ async function run() {
     const brandsCollection = database.collection('carBrands');
     const bannerCollection = database.collection('brandBanners');
     const cartsCollection = database.collection('cartsCollection');
+    const testimonialCollection = database.collection('testimonialCollection');
 
     // get brands 
     app.get('/brands', async(req, res) => {
@@ -181,6 +182,24 @@ async function run() {
     console.log(dleteId);
     console.log('Some one hitting for delete cart');
   })
+
+  // server code for testimonials
+
+    // get testmonials 
+    app.get('/testimonials', async(req, res) => {
+      const gettestimon = testimonialCollection.find();
+      const gettestmonilssResult = await gettestimon.toArray();
+      res.send(gettestmonilssResult);
+    })
+    // post testimonial
+    app.post('/testimonials', async(req, res) => {
+      const getTest = req.body;
+      const addTestResult = await testimonialCollection.insertOne(getTest);
+      res.send(addTestResult);
+      console.log(getTest);
+      console.log('someone hitting for add a review');
+    })
+
 
 
     // Send a ping to confirm a successful connection
