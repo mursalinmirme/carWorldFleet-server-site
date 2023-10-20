@@ -20,6 +20,10 @@ const client = new MongoClient(uri, {
   }
 });
 
+app.get('/', async(req, res) => {
+  res.send("server successfully placed in local server. My sub category data will comming soon...");
+})
+
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
@@ -28,12 +32,9 @@ async function run() {
     const carsCollection = database.collection('carsCollectin');
     const brandsCollection = database.collection('carBrands');
     const bannerCollection = database.collection('brandBanners');
+    const cartsCollection = database.collection('cartsCollection');
 
-    app.get('/', async(req, res) => {
-        res.send("Hi, I am successfully placed in local server. My sub category data will comming soon...");
-    })
-
-    // get brands \
+    // get brands 
     app.get('/brands', async(req, res) => {
       const getBrands = brandsCollection.find();
       const getBrandsResult = await getBrands.toArray();
@@ -145,6 +146,41 @@ async function run() {
       res.send(getBannersResult);
       console.log('some on searchng banner filter')
     })
+
+  // add cart post system
+    // get carts
+    app.get('/carts', async(req, res) => {
+      const getcarts = cartsCollection.find();
+      const getcartsResult = await getcarts.toArray();
+      res.send(getcartsResult);
+    })
+    // get specific user carts
+    app.get('/carts/:userId', async(req, res) => {
+      const cartsFindId = req.params.userId;
+      const cartsFindQuery = {userId:cartsFindId};
+      const getcarts = cartsCollection.find(cartsFindQuery);
+      const getcartsResult = await getcarts.toArray();
+      res.send(getcartsResult);
+    })
+
+  // post cart
+    app.post('/carts', async(req, res) => {
+    const getCart = req.body;
+    const addCartsResult = await cartsCollection.insertOne(getCart);
+    res.send(addCartsResult);
+    console.log(getCart);
+    console.log('someone hitting for add to carts btn');
+  })
+
+  //delete a cart
+  app.delete('/carts/:deleteId', async(req, res) => {
+    const dleteId = req.params.deleteId;
+    const findDeleteItem = {_id:dleteId};
+    const deleteResult = await cartsCollection.deleteOne(findDeleteItem);
+    res.send(deleteResult);
+    console.log(dleteId);
+    console.log('Some one hitting for delete cart');
+  })
 
 
     // Send a ping to confirm a successful connection
